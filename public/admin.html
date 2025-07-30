@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Inventory App</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-box-seam me-2"></i>Inventory App
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin">Admin Panel</a>
+                    </li>
+                    
+                    <!-- User Links -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i>
+                            <span id="user-name">Admin</span>
+                            <span class="badge badge-admin ms-1">admin</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/home">Dashboard</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-5 pt-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0">
+                <div class="bg-light sidebar" style="min-height: calc(100vh - 120px);">
+                    <div class="p-3">
+                        <h5 class="text-primary">
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Admin Panel
+                        </h5>
+                    </div>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                            <i class="bi bi-house me-2"></i>Dashboard
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('products')">
+                            <i class="bi bi-box me-2"></i>Products
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('users')">
+                            <i class="bi bi-people me-2"></i>Users
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('analytics')">
+                            <i class="bi bi-graph-up me-2"></i>Analytics
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-9 col-lg-10">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="admin-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="bi bi-speedometer2 me-2"></i>Dashboard Overview</h2>
+                        <button class="btn btn-outline-primary" onclick="refreshDashboard()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">Total Products</h6>
+                                            <h3 id="total-products">0</h3>
+                                        </div>
+                                        <i class="bi bi-box display-4 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">Total Users</h6>
+                                            <h3 id="total-users">0</h3>
+                                        </div>
+                                        <i class="bi bi-people display-4 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">Low Stock</h6>
+                                            <h3 id="low-stock">0</h3>
+                                        </div>
+                                        <i class="bi bi-exclamation-triangle display-4 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h6 class="card-title">Categories</h6>
+                                            <h3 id="total-categories">0</h3>
+                                        </div>
+                                        <i class="bi bi-tags display-4 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="bi bi-clock-history me-2"></i>Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group" id="recent-activity">
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div id="products-section" class="admin-section d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="bi bi-box me-2"></i>Product Management</h2>
+                        <button class="btn btn-primary" onclick="showAddProductModal()">
+                            <i class="bi bi-plus-circle me-2"></i>Add Product
+                        </button>
+                    </div>
+
+                    <!-- Product Filters -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="product-search" placeholder="Search products...">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="product-category-filter">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="product-status-filter">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-secondary w-100" onclick="refreshProducts()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Products Table -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="products-table-body">
+                                        <tr>
+                                            <td colspan="7" class="text-center">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="users-section" class="admin-section d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="bi bi-people me-2"></i>User Management</h2>
+                        <button class="btn btn-primary" onclick="showAddUserModal()">
+                            <i class="bi bi-person-plus me-2"></i>Add User
+                        </button>
+                    </div>
+
+                    <!-- User Filters -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="user-search" placeholder="Search users...">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="user-role-filter">
+                                <option value="">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="customer">Customer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-secondary w-100" onclick="refreshUsers()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-table-body">
+                                        <tr>
+                                            <td colspan="5" class="text-center">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div id="analytics-section" class="admin-section d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="bi bi-graph-up me-2"></i>Analytics</h2>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Product Categories Distribution</h5>
+                                </div>
+                                <div class="card-body" id="category-chart">
+                                    <p class="text-muted">Category distribution will be shown here.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>User Roles Distribution</h5>
+                                </div>
+                                <div class="card-body" id="role-chart">
+                                    <p class="text-muted">User role distribution will be shown here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="product-modal-title">Add Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="product-form">
+                    <div class="modal-body">
+                        <input type="hidden" id="product-id">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="product-name" class="form-label">Product Name *</label>
+                                <input type="text" class="form-control" id="product-name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="product-category" class="form-label">Category *</label>
+                                <input type="text" class="form-control" id="product-category" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="product-price" class="form-label">Price *</label>
+                                <input type="number" class="form-control" id="product-price" step="0.01" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="product-quantity" class="form-label">Quantity *</label>
+                                <input type="number" class="form-control" id="product-quantity" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="product-description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-image" class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="product-image">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="product-submit-btn">Add Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="user-modal-title">Add User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="user-form">
+                    <div class="modal-body">
+                        <input type="hidden" id="user-id">
+                        <div class="mb-3">
+                            <label for="user-name" class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" id="user-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="user-email" required>
+                        </div>
+                        <div class="mb-3" id="password-field">
+                            <label for="user-password" class="form-label">Password *</label>
+                            <input type="password" class="form-control" id="user-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user-role" class="form-label">Role *</label>
+                            <select class="form-select" id="user-role" required>
+                                <option value="customer">Customer</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="user-submit-btn">Add User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="delete-message">Are you sure you want to delete this item?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container"></div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Auth JS -->
+    <script src="/js/auth.js"></script>
+
+    <script>
+        let allProducts = [];
+        let allUsers = [];
+        let currentSection = 'dashboard';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is admin
+            if (!requireAdmin()) return;
+
+            await initAuth();
+            const user = getUser();
+            document.getElementById('user-name').textContent = user.name;
+
+            // Load initial data
+            await loadDashboardData();
+            setupEventListeners();
+        });
+
+        // Section navigation
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(el => {
+                el.classList.add('d-none');
+            });
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(section + '-section').classList.remove('d-none');
+            event.target.classList.add('active');
+            currentSection = section;
+
+            // Load section-specific data
+            switch(section) {
+                case 'products':
+                    loadProducts();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+            }
+        }
+
+        // Dashboard functions
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadProducts(),
+                    loadUsers()
+                ]);
+                updateDashboardStats();
+                loadRecentActivity();
+            } catch (error) {
+                showToast('Error loading dashboard data: ' + error.message, 'danger');
+            }
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('total-products').textContent = allProducts.length;
+            document.getElementById('total-users').textContent = allUsers.length;
+            
+            const lowStockCount = allProducts.filter(p => p.quantity < 10).length;
+            document.getElementById('low-stock').textContent = lowStockCount;
+            
+            const categories = [...new Set(allProducts.map(p => p.category))];
+            document.getElementById('total-categories').textContent = categories.length;
+        }
+
+        function loadRecentActivity() {
+            const activityContainer = document.getElementById('recent-activity');
+            activityContainer.innerHTML = `
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">System initialized</h6>
+                        <small>Just now</small>
+                    </div>
+                    <p class="mb-1">Admin panel loaded successfully</p>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">Products loaded</h6>
+                        <small>Just now</small>
+                    </div>
+                    <p class="mb-1">${allProducts.length} products in inventory</p>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">Users loaded</h6>
+                        <small>Just now</small>
+                    </div>
+                    <p class="mb-1">${allUsers.length} users in system</p>
+                </div>
+            `;
+        }
+
+        // Product management
+        async function loadProducts() {
+            try {
+                const response = await apiRequest('/api/products/admin/all');
+                allProducts = response;
+                
+                if (currentSection === 'products') {
+                    populateProductCategories();
+                    displayProducts();
+                }
+            } catch (error) {
+                showToast('Error loading products: ' + error.message, 'danger');
+            }
+        }
+
+        function populateProductCategories() {
+            const categoryFilter = document.getElementById('product-category-filter');
+            const categories = [...new Set(allProducts.map(product => product.category))];
+            
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+        }
+
+        function displayProducts() {
+            const tbody = document.getElementById('products-table-body');
+            const searchTerm = document.getElementById('product-search').value.toLowerCase();
+            const categoryFilter = document.getElementById('product-category-filter').value;
+            const statusFilter = document.getElementById('product-status-filter').value;
+
+            let filteredProducts = allProducts.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) ||
+                                    product.category.toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || product.category === categoryFilter;
+                const matchesStatus = !statusFilter || 
+                                    (statusFilter === 'active' && product.isActive) ||
+                                    (statusFilter === 'inactive' && !product.isActive);
+                
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            tbody.innerHTML = '';
+            
+            if (filteredProducts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No products found</td></tr>';
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <img src="${product.imageUrl}" alt="${product.name}" 
+                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                    </td>
+                    <td>
+                        <strong>${product.name}</strong>
+                        <br><small class="text-muted">${product.description?.substring(0, 50)}...</small>
+                    </td>
+                    <td><span class="badge bg-secondary">${product.category}</span></td>
+                    <td><strong>$${product.price.toFixed(2)}</strong></td>
+                    <td>
+                        <span class="badge ${product.quantity > 10 ? 'bg-success' : product.quantity > 0 ? 'bg-warning' : 'bg-danger'}">
+                            ${product.quantity}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${product.isActive ? 'bg-success' : 'bg-secondary'}">
+                            ${product.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editProduct('${product._id}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${product._id}', '${product.name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showAddProductModal() {
+            document.getElementById('product-modal-title').textContent = 'Add Product';
+            document.getElementById('product-submit-btn').textContent = 'Add Product';
+            document.getElementById('product-form').reset();
+            document.getElementById('product-id').value = '';
+            new bootstrap.Modal(document.getElementById('productModal')).show();
+        }
+
+        function editProduct(productId) {
+            const product = allProducts.find(p => p._id === productId);
+            if (!product) return;
+
+            document.getElementById('product-modal-title').textContent = 'Edit Product';
+            document.getElementById('product-submit-btn').textContent = 'Update Product';
+            document.getElementById('product-id').value = product._id;
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-quantity').value = product.quantity;
+            document.getElementById('product-description').value = product.description || '';
+            document.getElementById('product-image').value = product.imageUrl || '';
+
+            new bootstrap.Modal(document.getElementById('productModal')).show();
+        }
+
+        function deleteProduct(productId, productName) {
+            document.getElementById('delete-message').textContent = 
+                `Are you sure you want to delete "${productName}"? This action cannot be undone.`;
+            
+            document.getElementById('confirm-delete-btn').onclick = async () => {
+                try {
+                    await apiRequest(`/api/products/${productId}`, { method: 'DELETE' });
+                    showToast('Product deleted successfully', 'success');
+                    await loadProducts();
+                    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                } catch (error) {
+                    showToast('Error deleting product: ' + error.message, 'danger');
+                }
+            };
+
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        // User management
+        async function loadUsers() {
+            try {
+                const response = await apiRequest('/api/users');
+                allUsers = response;
+                
+                if (currentSection === 'users') {
+                    displayUsers();
+                }
+            } catch (error) {
+                showToast('Error loading users: ' + error.message, 'danger');
+            }
+        }
+
+        function displayUsers() {
+            const tbody = document.getElementById('users-table-body');
+            const searchTerm = document.getElementById('user-search').value.toLowerCase();
+            const roleFilter = document.getElementById('user-role-filter').value;
+
+            let filteredUsers = allUsers.filter(user => {
+                const matchesSearch = user.name.toLowerCase().includes(searchTerm) ||
+                                    user.email.toLowerCase().includes(searchTerm);
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                
+                return matchesSearch && matchesRole;
+            });
+
+            tbody.innerHTML = '';
+            
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No users found</td></tr>';
+                return;
+            }
+
+            filteredUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${user.name}</strong></td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="badge ${user.role === 'admin' ? 'badge-admin' : 'badge-customer'}">
+                            ${user.role}
+                        </span>
+                    </td>
+                    <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser('${user._id}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user._id}', '${user.name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showAddUserModal() {
+            document.getElementById('user-modal-title').textContent = 'Add User';
+            document.getElementById('user-submit-btn').textContent = 'Add User';
+            document.getElementById('user-form').reset();
+            document.getElementById('user-id').value = '';
+            document.getElementById('password-field').style.display = 'block';
+            document.getElementById('user-password').required = true;
+            new bootstrap.Modal(document.getElementById('userModal')).show();
+        }
+
+        function editUser(userId) {
+            const user = allUsers.find(u => u._id === userId);
+            if (!user) return;
+
+            document.getElementById('user-modal-title').textContent = 'Edit User';
+            document.getElementById('user-submit-btn').textContent = 'Update User';
+            document.getElementById('user-id').value = user._id;
+            document.getElementById('user-name').value = user.name;
+            document.getElementById('user-email').value = user.email;
+            document.getElementById('user-role').value = user.role;
+            document.getElementById('password-field').style.display = 'none';
+            document.getElementById('user-password').required = false;
+
+            new bootstrap.Modal(document.getElementById('userModal')).show();
+        }
+
+        function deleteUser(userId, userName) {
+            document.getElementById('delete-message').textContent = 
+                `Are you sure you want to delete user "${userName}"? This action cannot be undone.`;
+            
+            document.getElementById('confirm-delete-btn').onclick = async () => {
+                try {
+                    await apiRequest(`/api/users/${userId}`, { method: 'DELETE' });
+                    showToast('User deleted successfully', 'success');
+                    await loadUsers();
+                    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                } catch (error) {
+                    showToast('Error deleting user: ' + error.message, 'danger');
+                }
+            };
+
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        // Analytics
+        function loadAnalytics() {
+            // Simple analytics display
+            const categoryChart = document.getElementById('category-chart');
+            const roleChart = document.getElementById('role-chart');
+
+            // Category distribution
+            const categories = allProducts.reduce((acc, product) => {
+                acc[product.category] = (acc[product.category] || 0) + 1;
+                return acc;
+            }, {});
+
+            categoryChart.innerHTML = Object.entries(categories)
+                .map(([category, count]) => `
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>${category}</span>
+                        <span class="badge bg-primary">${count}</span>
+                    </div>
+                `).join('');
+
+            // Role distribution
+            const roles = allUsers.reduce((acc, user) => {
+                acc[user.role] = (acc[user.role] || 0) + 1;
+                return acc;
+            }, {});
+
+            roleChart.innerHTML = Object.entries(roles)
+                .map(([role, count]) => `
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-capitalize">${role}</span>
+                        <span class="badge ${role === 'admin' ? 'badge-admin' : 'badge-customer'}">${count}</span>
+                    </div>
+                `).join('');
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Product form
+            document.getElementById('product-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const productData = Object.fromEntries(formData);
+                const isEdit = !!document.getElementById('product-id').value;
+
+                try {
+                    const url = isEdit ? `/api/products/${productData['product-id']}` : '/api/products';
+                    const method = isEdit ? 'PUT' : 'POST';
+                    
+                    const payload = {
+                        name: productData['product-name'],
+                        category: productData['product-category'],
+                        price: parseFloat(productData['product-price']),
+                        quantity: parseInt(productData['product-quantity']),
+                        description: productData['product-description'],
+                        imageUrl: productData['product-image'] || undefined
+                    };
+
+                    await apiRequest(url, { method, body: payload });
+                    showToast(`Product ${isEdit ? 'updated' : 'created'} successfully`, 'success');
+                    await loadProducts();
+                    bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+                } catch (error) {
+                    showToast(`Error ${isEdit ? 'updating' : 'creating'} product: ` + error.message, 'danger');
+                }
+            });
+
+            // User form
+            document.getElementById('user-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const userData = Object.fromEntries(formData);
+                const isEdit = !!document.getElementById('user-id').value;
+
+                try {
+                    if (isEdit) {
+                        const payload = {
+                            name: userData['user-name'],
+                            email: userData['user-email'],
+                            role: userData['user-role']
+                        };
+                        await apiRequest(`/api/users/${userData['user-id']}`, { method: 'PUT', body: payload });
+                    } else {
+                        const payload = {
+                            name: userData['user-name'],
+                            email: userData['user-email'],
+                            password: userData['user-password'],
+                            role: userData['user-role']
+                        };
+                        await apiRequest('/api/auth/register', { method: 'POST', body: payload });
+                    }
+                    
+                    showToast(`User ${isEdit ? 'updated' : 'created'} successfully`, 'success');
+                    await loadUsers();
+                    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                } catch (error) {
+                    showToast(`Error ${isEdit ? 'updating' : 'creating'} user: ` + error.message, 'danger');
+                }
+            });
+
+            // Filter events
+            document.getElementById('product-search').addEventListener('input', displayProducts);
+            document.getElementById('product-category-filter').addEventListener('change', displayProducts);
+            document.getElementById('product-status-filter').addEventListener('change', displayProducts);
+            document.getElementById('user-search').addEventListener('input', displayUsers);
+            document.getElementById('user-role-filter').addEventListener('change', displayUsers);
+        }
+
+        // Refresh functions
+        async function refreshDashboard() {
+            await loadDashboardData();
+            showToast('Dashboard refreshed', 'success');
+        }
+
+        async function refreshProducts() {
+            await loadProducts();
+            showToast('Products refreshed', 'success');
+        }
+
+        async function refreshUsers() {
+            await loadUsers();
+            showToast('Users refreshed', 'success');
+        }
+    </script>
+</body>
+</html>
